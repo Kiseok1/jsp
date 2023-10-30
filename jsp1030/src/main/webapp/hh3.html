@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>form파일</title>
+		<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script>
+			//확인버튼을 클릭할 때 input text가 없으면 '이름을 입력하셔야 이동이 가능합니다.' inputbox포커스
+			/*
+			$(function(){
+				$("#btn").click(function(){
+					if($("#name").val()=="") {
+						alert("이름을 입력하셔야 이동이 가능합니다.");
+						$("#name").focus();
+						return false;
+					}
+					
+					frm.submit();
+				});
+			});//jquery
+			*/
+			
+			function checkBtn(){
+				//자바스크립트 구문 : document.querySelector("#name").value;
+				// document.getElementById(name)
+				//자바스크립트 구문 : document.querySelector(".name").value;
+				// document.getElementsByClassName(name)
+				if(document.querySelector("#name").value=="") {
+					alert("이름을 입력하셔야 이동이 가능합니다.");
+					document.querySelector("#name").focus();
+					return false;
+				}
+				
+				frm.submit();
+			}
+		</script>
+			
+	</head>
+	<body>
+		<form name="frm" method="post" action="http://localhost:8181/jsp1030/Ser06"> <!--http's'아님 주의 -->
+			<label>이름</label>
+			<input type="text" name="name" id="name">
+			<input type="button" onclick="checkBtn()" id="btn" value="확인">
+		</form>
+	
+	</body>
+</html>
