@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>성적처리프로그램</title>
+		<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<style>
+			section{width: 1000px; height: 900px; margin:50px auto;}
+			h1{text-align: center; font-size: 50px;}
+			table,th,td{border:1px solid black; border-collapse: collapse;
+			font-size: 25px;}
+			table{width: 800px; margin:0 auto;}
+			th{width: 300px; height: 50px;}
+			td{width: 500px; height: 50px;}
+			input[type="text"]{width: 500px; height: 50px; font-size: 25px; }
+			#major01,#subject01,#all_btn{text-align: center;}
+			select{width: 200px; height: 50px; font-size: 25px; text-align: center;}
+			button{width: 140px; height: 40px; font-size: 25px;}
+		</style>
+		<script>
+			function frmbtn(){				
+				if($("#no").val()==""){
+					alert("학번을 입력해주십시오.");
+					$("#no").focus();
+					return false;
+				}
+				if($("#name").val().length<3){
+					alert("이름은 2글자이상 입력하셔야합니다.");
+					$("#name").focus();
+					return false;
+				}
+				if($("#kor").val()>100 || $("#eng").val()>100 || $("#math").val()>100) { 
+					alert("점수 입력이 잘못되었습니다.");
+					$("#kor").focus();
+					return false;
+				}
+				
+				if($("input:checkbox[name=subject]:checked").length<1){
+					alert("선호과목은 하나 이상 체크되어야합니다.");
+					$("#history").prop("checked",true);	
+					/*	
+					$("input:checkbox[name=subject]".each(function()){
+						this.checked =true;
+					})*/
+					
+					return false;
+				}
+				frm.submit();
+			}
+		</script>
+	</head>
+	<body>
+		<h1>성적처리 프로그램</h1>
+		<section>
+			<form name="frm" method="get" action="S03">
+				<table>
+					<tr>
+						<th>학번</th>
+						<td>
+							<input type="text" name="no" id="no">
+						</td>
+					</tr>
+					<tr>
+						<th>이름</th>
+						<td>
+							<input type="text" name="name" id="name">
+						</td>
+					</tr>
+					<tr>
+						<th>국어</th>
+						<td>
+							<input type="text" name="kor" id="kor">
+						</td>
+					</tr>
+					<tr>
+						<th>영어</th>
+						<td>
+							<input type="text" name="eng" id="eng">
+						</td>
+					</tr>
+					<tr>
+						<th>수학</th>
+						<td>
+							<input type="text" name="math" id="math">
+						</td>
+					</tr>
+					<tr>
+						<th>계열선택</th>
+						<td id="major01">
+							<input type="radio" name="major" id="science" value="science" checked>
+							<label for="science">이과</label>
+							<input type="radio" name="major" id="arts" value="arts">
+							<label for="arts">문과</label>
+						</td>
+					</tr>
+					<tr>
+						<th>선호과목</th>
+						<td id="subject01">
+							<input type="checkbox" name="subject" id="kor1" value="kor1">
+							<label for="kor1">국어</label>
+							<input type="checkbox" name="subject" id="eng1" value="eng1">
+							<label for="eng1">영어</label>
+							<input type="checkbox" name="subject" id="math1" value="math1">
+							<label for="math1">수학</label>
+							<input type="checkbox" name="subject" id="science1" value="science1">
+							<label for="science1">과학</label>
+							<input type="checkbox" name="subject" id="history" value="history">
+							<label for="history">역사</label>
+						</td>
+					</tr>
+					<tr>
+						<th>주소</th>
+						<td id="address">
+							<select name="address">
+								<option value="서울">서울</option>
+								<option value="부산">부산</option>
+								<option value="인천">인천</option>
+								<option value="대전">대전</option>
+								<option value="대구">대구</option>
+							</select>							
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" id="all_btn">
+							<button type="button" id="fbtn" onclick="frmbtn()">확인</button>
+							<button type="button">취소</button>
+						</td>
+					</tr>
+					
+					
+				</table>				
+			</form>
+		</section>
+		
+	</body>
+</html>
