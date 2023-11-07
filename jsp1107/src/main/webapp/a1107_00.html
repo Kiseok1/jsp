@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>11월 7일 화ㅣ수업</title>
+		<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+	</head>
+	<body>
+		11월 7일 화 수업<br>
+			1. session-로그인(S1107_01.java, jsp1107_01.jsp, jsp_login.jsp)
+			2. session-로그인(S1107_01.java, jsp1107_01.jsp, jsp_login.jsp, jsp_logout.jsp)
+			   session-로그인(layout/main.jsp, memeber/login.jsp, doLogin.jsp)
+			3. session-로그인(layout/main.jsp, memeber/login.jsp, doLogin.jsp,doLogout.jsp)
+			4. 예외처리(WEB-INF/web.xml, error404.jsp, error500.jsp)
+			5. 자바 빈(useBean) (jsp1107_03.jsp), 
+			   학생성적처리(StuScore.java, jspForm1.jsp, jsp1107_04.jsp)
+			6. 학생성적처리(StuScore.java, jspForm1.jsp, jsp1107_05.jsp)
+			   sql 이클립스 연동(https://recollectionis.tistory.com/161)
+			   (https://12716.tistory.com/entry/JDBC-JDBCJava-DataBase-Connectivity%EC%97%B0%EA%B2%B0%EC%88%9C%EC%84%9C)
+			7. 이클립스에서 sql불러오기(jsp1107_06.jsp)
+			8. 이클립스에서 sql불러오기(jsp1107_07.jsp)
+			<br>
+		summary
+			1. servlet에서는 session 생성위해서 객체선언 필요. (HttpSession session = request.getSession();)
+			2. 쿠키 활용 - 아이디 저장, 팝업창
+			3. history.back()    - 이전정보 남아있음(id,pw)
+			   locatrion.href="" - 이전정보 지워짐 
+			   sendRedirect();   - 이전정보 지워짐
+			4. web.xml에 처리  - <error-page> <error-code> <location>
+			   error.jsp에 처리 - <%@ page isErrorPage="true" %> <% response.setStatus(200); %>
+			5. jsp:useBean, jsp:setProperty, jsp:getProperty
+			6. <jsp:useBean id="score1" class="com.java.www.StuScore" /> 
+			   <jsp:setProperty name="score1" property="*" />
+			7. jsp1107_06.jsp
+			8. jsp1107_07.jsp   
+			  
+	</body>
+</html>
