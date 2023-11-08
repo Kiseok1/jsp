@@ -31,7 +31,7 @@
 			
 			try{
 				Class.forName("oracle.jdbc.driver.OracleDriver");
-				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "ora_user", "1111");
+				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "test", "1111");
 				stmt = conn.createStatement();
 				String query = "insert into mem values('"+id+"','"+pw+"','"+name+"','"+phone+"','"+gender+"','"+hobby+"',sysdate)";
 				int result = stmt.executeUpdate(query); //insert,update,delete -성공:1 실패:-1 
