@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>11월 9일 목 수업</title>
+		<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+	</head>
+	<body>
+		11월 9일 목 수업<br>
+			1. 로그인 (jsp_main.jsp, jsp_ligon.jsp, doJsp_login_직접연결.jsp)
+			2. 커넥션풀 (doJsp_login_cp.jsp)
+			3. 회원가입(jsp_memWrite.jsp, doJsp_memWrite.jsp)
+			4. 회원가입(jsp_memWrite.jsp, doJsp_memWrite.jsp)
+			5. DAO,DTO 로그인(MemberDao.java, MemberDto.java, m_main.jsp, m_login.jsp, DoM_login.java)
+			6. DAO,DTO 회원가입(MemberDao.java, MemberDto.java, m_main.jsp, m_write.jsp, DoM_write.java)
+			7. DAO,DTO 회원가입(MemberDao.java, MemberDto.java, m_main.jsp, m_write.jsp, DoM_write.java)
+			8. 
+			<br>
+		summary
+			1. PreparedStatement 활용(doJsp_login.jsp)
+			   
+			   //PreparedStatement
+			   PreparedStatement pstmt = null;
+			   
+			   String query = "select * from member where id=? and pw=?";
+			   pstmt = conn.prepareStatement(query); //()에 query문 입력
+			   pstmt.setString(1, uid);   //첫?에 uid
+			   pstmt.setString(2, upw);   //두번째?에 upw
+			   rs = pstmt.executeQuery(); //() 비움
+			   
+			   //Statement
+			   Statement stmt = null
+			   
+			   stmt = conn.createStatement(); //() 비움
+			   String query = "select * from member where id='"+uid+"' and pw='"+upw+"'";
+			   rs = stmt.executeQuery(query); // ()에 query문 입력
+			    
+			   
+			2. §에러발생시 F12-네트워크로 값이 잘 전달되었는지 확인
+			
+			   §커넥션풀연결준비
+			   1.Servers/context.xml 29행에 입력
+					<Resource
+				    	auth="Container"
+				    	driverClassName = "oracle.jdbc.driver.OracleDriver"
+				    	url = "jdbc:oracle:thin:@localhost:1521:xe"
+				    	username = "ora_user"
+				    	password = "1111"
+				    	name = "jdbc/Oracle18"
+				    	type = "javax.sql.DataSource"
+				    	maxActive = "50"
+				    	maxWait = "1000"
+				     />
+				2.서버 종료 후 퍼플리싱
+				
+				§커넥션풀 사용법(doJsp_login_cp.jsp)
+				Context context = new InitialContext(); //커넥션풀 사용위한 환경조성(context)
+				DataSource ds = (DataSource)context.lookup("java:comp/env/jdbc/Oracle18"); //context를 활용하여 db접속위한 정보(id,pw,위치,동접자수 등) 검색
+				conn = ds.getConnection(); //db연결
+			
+			3. 
+			4. PreparedStatement 사용시 주의
+			   String query = "select * from member where id=? and pw=?"; 
+			   ('?' X / ? O )따옴표 주의 
+			5. Dao - 입력한 값(로그인에서 id,pw)을 db에서 검색
+			6. Dto - 
+			7. 
+			8. 
+			  
+	</body>
+</html>
