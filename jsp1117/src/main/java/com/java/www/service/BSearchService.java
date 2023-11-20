@@ -10,13 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.java.www.dao.BoardDao;
 import com.java.www.dto.BoardDto;
 
-public class BListService implements Service {
+public class BSearchService implements Service {
 
 	//dao접근
 	BoardDao bdao = new BoardDao();
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) {
+		String bcategory = request.getParameter("bcategory");
+		String bsearch = request.getParameter("bsearch");
 		
 		//---------하단넘버링------------
 		
@@ -27,9 +29,7 @@ public class BListService implements Service {
 			System.out.println("request.getParameter page : "+page);
 		}
 		System.out.println("현재페이지 : "+page);
-		String bcategory = request.getParameter("bcategory");
-		String bsearch = request.getParameter("bsearch");
-
+		
 		// --> numbering 메소드 호출
 		Map<String, Object> map = numbering(page,bcategory,bsearch);
 		int listCount = (int) map.get("listCount");
@@ -39,13 +39,11 @@ public class BListService implements Service {
 		int startRow = (int) map.get("startRow");
 		int endRow = (int) map.get("endRow");
 		
-		//전체게시글 가져오기 - 10개씩만 가져오기 
-		ArrayList<BoardDto> list = bdao.bList(bcategory,bsearch,startRow,endRow);
 		
-		//확인
-		System.out.println("BListService list : "+list.get(0).getBno());
+		//게시글 검색 - select
+		ArrayList<BoardDto> list = bdao.bSearch(bcategory,bsearch,startRow,endRow); 
 		
-		//request추가
+		//request 추가
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
 		request.setAttribute("listCount", listCount);
@@ -54,21 +52,20 @@ public class BListService implements Service {
 		request.setAttribute("endPage", endPage);
 		request.setAttribute("bcategory", bcategory);
 		request.setAttribute("bsearch", bsearch);
+		
 
 	}//execute
 	
-	//메소드
-	public Map<String, Object> numbering(int page, String bcategory, String bsearch){
+	public Map<String , Object> numbering(int page, String bcategory, String bsearch){
 		Map<String, Object> map = new HashMap();
 		//----
 		int rowPage = 10; //한페이지당 10개의 게시글 표시
 		int bottomPage = 10; //하단넘버링 개수
 		
-		
-		//1. 전체개수
+		//1. 전체개수,검색게시글수개수
 		int listCount = bdao.listCount(bcategory,bsearch);
 		//2. 최대 하단넘버링 페이지
-		int maxPage = (int)Math.ceil((double)(listCount/rowPage));
+		int maxPage = (int)Math.ceil((double)listCount/rowPage);
 		//3. startPage - 하단넘버링 시작번호
 		int startPage = (int)((page-1)/bottomPage) * bottomPage + 1;
 		//4. endPage - 하단넘버링 끝번호
@@ -90,12 +87,10 @@ public class BListService implements Service {
 		map.put("startRow", startRow);
 		map.put("endRow", endRow);
 		//----
-	
+		
+		
 		return map;
 	}//numbering
-	
-	
-	
 	
 	
 

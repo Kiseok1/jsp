@@ -17,6 +17,7 @@ import com.java.www.service.Service;
 import com.java.www.service.BDeleteService;
 import com.java.www.service.BInsertService;
 import com.java.www.service.BListService;
+import com.java.www.service.BSearchService;
 import com.java.www.service.BSelectOneService;
 import com.java.www.service.BUpdateService;
 
@@ -56,6 +57,7 @@ public class FController extends HttpServlet {
 			response.sendRedirect("logout.jsp");
 			break;
 		case "/bList.do":  //1. 게시글 전체 가져오기
+			//service = new BListService();
 			service = new BListService();
 			service.execute(request, response);
 			//확인용
@@ -100,6 +102,13 @@ public class FController extends HttpServlet {
 			System.out.println("bno : "+request.getParameter("bno"));
 			System.out.println("FController : bDelete.jsp호출");
 			url = "bDelete.jsp";
+			break;
+		case "/bsearch.do":  //6. 게시글 검색 - select
+			service = new BSearchService();
+			service.execute(request, response);
+			//확인용
+			System.out.println("FController : bList.jsp호출");
+			url = "bList.jsp";
 			break;
 			
 		}//switch

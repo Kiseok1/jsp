@@ -22,7 +22,7 @@ public class BoardDao {
 	int bno,bgroup,bstep,bindent,bhit;
 	String btitle,bcontent,id,bfile,query;
 	Timestamp bdate;
-	int result;
+	int result,listCount;
 	
 	//getConnection
 	public Connection getConnection() {
@@ -37,12 +37,38 @@ public class BoardDao {
 		return connection;
 	}//getConnection
 
-	//1.게시글 전체가져오기 - selectAll
-	public ArrayList<BoardDto> bList() {
+	//1.게시글 전체가져오기,검색 가져오기 - select
+	public ArrayList<BoardDto> bList(String bcategory, String bsearch, int startRow, int endRow) {
 		try {
 			conn = getConnection();
-			query = "select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a) where rnum between 1 and 10";
-			pstmt = conn.prepareStatement(query);
+			//--------------
+			if(bcategory == null ) {
+				query = "select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a) where rnum between ? and ?";
+				pstmt = conn.prepareStatement(query);
+				pstmt.setInt(1, startRow);
+				pstmt.setInt(2, endRow);
+			} else if(bcategory.equals("all")) {
+				query="select * from (select row_number() over(order by bgroup desc,bstep asc) rnum, a.* from board a where btitle like '%'||?||'%' or bcontent like '%'||?||'%') where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				pstmt.setString(2, bsearch);
+				pstmt.setInt(3, startRow);
+				pstmt.setInt(4, endRow);
+			} else if(bcategory.equals("btitle")) {
+				query="select * from (select row_number() over(order by bgroup desc,bstep asc) rnum, a.* from board a where btitle like '%'||?||'%' ) where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				pstmt.setInt(2, startRow);
+				pstmt.setInt(3, endRow);
+			} else {
+				query="select * from (select row_number() over(order by bgroup desc,bstep asc) rnum, a.* from board a where bcontent like '%'||?||'%' ) where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				pstmt.setInt(2, startRow);
+				pstmt.setInt(3, endRow);
+			}
+			
+			//--------------
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -187,5 +213,109 @@ public class BoardDao {
 		}
 		return result;
 	}
+
+	//6. 검색 - select
+	public ArrayList<BoardDto> bSearch(String bcategory, String bsearch, int startRow, int endRow) {
+		try {
+			conn = getConnection();
+			switch(bcategory){
+			case "all":
+				query="select * from (select row_number() over(order by bgroup desc,bstep asc) rnum, a.* from board a where btitle like '%'||?||'%' or bcontent like '%'||?||'%') where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				pstmt.setString(2, bsearch);
+				pstmt.setInt(3, startRow);
+				pstmt.setInt(4, endRow);
+				break;
+			case "btitle":
+				query="select * from (select row_number() over(order by bgroup desc,bstep asc) rnum, a.* from board a where btitle like '%'||?||'%' ) where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				pstmt.setInt(2, startRow);
+				pstmt.setInt(3, endRow);
+			case "bcontent":
+				query="select * from (select row_number() over(order by bgroup desc,bstep asc) rnum, a.* from board a where bcontent like '%'||?||'%' ) where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				pstmt.setInt(2, startRow);
+				pstmt.setInt(3, endRow);
+			}
+			rs=pstmt.executeQuery();
+			
+			while(rs.next()) {
+				bno=rs.getInt("bno");
+				btitle=rs.getString("btitle");
+				bcontent=rs.getString("bcontent");
+				bdate=rs.getTimestamp("bdate");
+				id=rs.getString("id");
+				bgroup=rs.getInt("bgroup");
+				bstep=rs.getInt("bstep");
+				bindent=rs.getInt("bindent");
+				bhit=rs.getInt("bhit");
+				bfile=rs.getString("bfile");
+				
+				list.add(new BoardDto(bno, btitle, bcontent, bdate, id, bgroup, bstep, bindent, bhit, bfile));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return list;
+	}//bSearch
+
+	//7. 전체게시글수,검색게시글수 - select
+	public int listCount(String bcategory, String bsearch) {
+		try {
+			conn=getConnection();
+			//list
+			if(bcategory==null) {
+				query="select count(*) listCount from board";
+				pstmt=conn.prepareStatement(query);
+			} else if(bcategory.equals("all")) {
+				query="select count(*) listCount from board where btitle like '%'||?||'%' or bcontent like '%'||?||'%'";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				pstmt.setString(2, bsearch);
+				
+			} else if(bcategory.equals("btitle")) {
+				query="select count(*) listCount from board where btitle like '%'||?||'%'";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				
+			} else {
+				query="select count(*) listCount from board where bcontent like '%'||?||'%'";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, bsearch);
+				
+			}
+
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				listCount=rs.getInt("listCount");
+				System.out.println("전체게시글 수 : "+listCount);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return listCount;
+	}//listCount
+
+	
 	
 }
