@@ -15,6 +15,8 @@
 			th{width:200px; height:40px;}
 			td{width:400px; }
 			button{width: 200px; height: 60px; margin-top:30px;}
+			td *{vertical-align: middle;}
+			#idCheck{width: 100px; height: 20px; margin-top:0;}
 		</style>
 		<script>
 			$(function(){
@@ -34,11 +36,11 @@
 	<body>
 		<div>
 			<h1>회원가입</h1>
-			<form name="m_frm" method="post" action=Do_mwrite>
+			<form name="m_frm" method="post" action="doMInsert.do">
 				<table>
 					<tr>
 						<th>아이디</th>
-						<td><input type="text" name="id" id="id"></td>
+						<td><input type="text" name="id" id="id"><button type="button" id="idCheck">아이디 확인</button></td>
 					</tr>
 					<tr>
 						<th>패스워드</th>

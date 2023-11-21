@@ -21,6 +21,7 @@ public class MemberDao {
 	ArrayList<MemberDto> list = new ArrayList<MemberDto>();
 	String id,pw,name,phone,gender,hobby,query;
 	Timestamp mdate;
+	int result=0;
 	
 	//mDoLogin메소드 생성 - 로그인체크(id,pw)
 	public MemberDto mDoLogin(String id2, String pw2) {
@@ -69,6 +70,34 @@ public class MemberDao {
 		}
 		return connection;
 	}//getConnection
+
+	//회원가입 - insert
+	public int mInsert(MemberDto mdto2) {
+		try {
+			conn = getConnection();
+			query="insert into member values(?,?,?,?,?,?,sysdate)";
+			pstmt=conn.prepareStatement(query);
+			pstmt.setString(1, mdto2.getId());
+			pstmt.setString(2, mdto2.getPw());
+			pstmt.setString(3, mdto2.getName());
+			pstmt.setString(4, mdto2.getPhone());
+			pstmt.setString(5, mdto2.getGender());
+			pstmt.setString(6, mdto2.getHobby());
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}
 
 	
 
