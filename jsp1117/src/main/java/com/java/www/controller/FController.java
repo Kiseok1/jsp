@@ -17,9 +17,11 @@ import com.java.www.service.Service;
 import com.java.www.service.BDeleteService;
 import com.java.www.service.BInsertService;
 import com.java.www.service.BListService;
+import com.java.www.service.BReplyService;
 import com.java.www.service.BSearchService;
 import com.java.www.service.BSelectOneService;
 import com.java.www.service.BUpdateService;
+import com.java.www.service.DoBReplyService;
 import com.java.www.service.DoMInsertService;
 
 
@@ -109,12 +111,28 @@ public class FController extends HttpServlet {
 			System.out.println("FController : bDelete.jsp호출");
 			url = "bDelete.jsp";
 			break;
-		case "/bsearch.do":  //6. 게시글 검색 - select
-			service = new BSearchService();
+//		case "/bsearch.do":  //6. 게시글 검색 - select
+//			service = new BSearchService();
+//			service.execute(request, response);
+//			//확인용
+//			System.out.println("FController : bList.jsp호출");
+//			url = "bList.jsp";
+//			break;
+		case "/bReply.do":  //6. 답글달기 - select
+			service = new BReplyService();
 			service.execute(request, response);
 			//확인용
-			System.out.println("FController : bList.jsp호출");
-			url = "bList.jsp";
+			System.out.println("bno : "+request.getParameter("bno"));
+			System.out.println("FController : bReply.jsp호출");
+			url = "bReply.jsp";
+			break;
+		case "/doBReply.do":  //6. 답글달기저장 - insert
+			service = new DoBReplyService();
+			service.execute(request, response);
+			//확인용
+			System.out.println("bno : "+request.getParameter("bno"));
+			System.out.println("FController : doBReply.jsp호출");
+			url = "doBReply.jsp";
 			break;
 			
 		}//switch
