@@ -12,6 +12,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/notice_list.css">
+  <style>
+  	.txtOn{background:#202020; color:white; font-weight:700;}
+  </style>
 </head>
 <body>
   <header>
@@ -96,13 +99,32 @@
     </table>
 
     <ul class="page-num">
-      <li class="first"></li>
-      <li class="prev"></li>
-      <li class="num">
-        <div>1</div>
-      </li>
-      <li class="next"></li>
-      <li class="last"></li>
+      <a href="n_list.do?page=1"><li class="first"></li></a>
+      <c:if test="${page>1}">
+	      <a href="n_list.do?page=${page-1}"><li class="prev"></li></a>
+      </c:if>
+      <c:if test="${page<=1}">
+	      <li class="prev"></li>
+      </c:if>
+      <c:forEach var="n" begin="${startPage}" end="${endPage}" step="1">
+    	<c:if test="${page==n}">
+	      <li class="num txtOn">
+	        <div>${n}</div>
+	      </li>
+      	</c:if>
+      	<c:if test="${page!=n}">
+	      <li class="num">
+	       	 <a href="n_list.do?page=${n}"><div>${n}</div></a>
+	      </li>
+      	</c:if>
+      </c:forEach>
+      <c:if test="${page<maxPage}">
+	      <a href="n_list.do?page=${page+1}"><li class="next"></li></a>
+      </c:if>
+      <c:if test="${page>=maxPage}">
+	      <li class="next"></li>
+      </c:if>
+      <a href="n_list.do?page=${maxPage}"><li class="last"></li>
     </ul>
 
     <div class="write">쓰기</div>

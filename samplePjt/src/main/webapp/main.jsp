@@ -18,7 +18,7 @@
 	 					<li><a href="login.do">로그인</a></li>
 	 				</c:if>
 	 				<c:if test="${session_id!=null}">
-	 					<li class="txtbold">${session_name}님</li>
+	 					<li class="txtbold"><a href="m_info_input.do">${session_name}님</a></li>
 	 					<li><a href="logout.do">로그아웃</a></li>
 	 				</c:if>
 	 				

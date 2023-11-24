@@ -23,7 +23,7 @@ public class BoardDao {
 	int bno,bgroup,bstep,bindent,bhit;
 	String btitle,bcontent,id,bfile,query="";
 	Timestamp bdate;
-	int result;
+	int result,listCount;
 	
 	//getConnection
 	public Connection getConnection() {
@@ -39,11 +39,13 @@ public class BoardDao {
 	}//getConnection
 
 	//게시글 가져오기 - select
-	public ArrayList<BoardDto> n_listSelect() {
+	public ArrayList<BoardDto> n_listSelect(int startRow, int endRow) {
 		try {
 			conn=getConnection();
-			query="select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a) where rnum between 1 and 10";
+			query="select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a) where rnum between ? and ?";
 			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, startRow);
+			pstmt.setInt(2, endRow);
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
 				bno=rs.getInt("bno");
@@ -74,4 +76,29 @@ public class BoardDao {
 		}
 		return list;
 	}//n_listSelect
+
+	//게시글 전체 개수
+	public int nListCount() {
+		try {
+			conn=getConnection();
+			query="select count(*) listCount from board";
+			pstmt=conn.prepareStatement(query);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				listCount=rs.getInt("listCount");
+				System.out.println("dao nListCount : "+listCount);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return listCount;
+	}
 }

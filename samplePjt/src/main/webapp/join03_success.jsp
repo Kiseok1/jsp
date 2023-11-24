@@ -81,6 +81,7 @@
 				<p>
 					감사합니다.
 					<strong>회원가입이 완료되었습니다.</strong>
+					<p><a href="main.do">홈으로</a></p>
 				</p>
 			</div>	
 				
