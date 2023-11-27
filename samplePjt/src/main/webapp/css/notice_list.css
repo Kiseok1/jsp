@@ -84,6 +84,9 @@ table {
   line-height: 40px;
 }
 
+
+.listColor a:link, .listColor a:visited, .listColor a:active {color:black;}
+
 .table-notice {
   background-color: #e56e00;
   color: white;

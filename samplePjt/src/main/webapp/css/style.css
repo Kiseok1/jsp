@@ -8,6 +8,7 @@ body {
 }
 a{text-decoration: none;}
 
+
 /* Header Section */
 header {
   height: 35px;
@@ -20,6 +21,7 @@ header ul {
   float: right;
   list-style-type: none;
 }
+header ul li a {color:white; font-size: 13px; }
 
 li {
   display: inline-block;

@@ -29,7 +29,7 @@
 	 			</ul>
 	 		</div>
 	 		<nav>
-	 			<h1></h1>
+	 			<a href="main.do"><h1></h1></a>
 	 			<ul>
 	 				<li>COOKIT소개</li>
 	 				<li>COOKIT메뉴</li>

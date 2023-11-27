@@ -101,4 +101,66 @@ public class BoardDao {
 		}
 		return listCount;
 	}
+
+	//게시글 1개 가져오기
+	public BoardDto selectOne(int bno2) {
+		try {
+			conn=getConnection();
+			query="select * from board where bno=?";
+			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, bno2);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				bno=rs.getInt("bno");
+				bgroup=rs.getInt("bgroup");
+				bindent=rs.getInt("bindent");
+				bstep=rs.getInt("bstep");
+				bhit=rs.getInt("bhit");
+				btitle=rs.getString("btitle");
+				bcontent=rs.getString("bcontent");
+				id=rs.getString("id");
+				bfile=rs.getString("bfile");
+				bdate=rs.getTimestamp("bdate");
+				
+				bdto = new BoardDto(bno, btitle, bcontent, bdate, id, bgroup, bindent, bstep, bhit, bfile);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return bdto;
+	}//selectOne
+
+	//게시글 1개 저장
+	public int insert(BoardDto bdto2) {
+		try {
+			conn=getConnection();
+			query="insert into board values(board_seq.nextval,?,?,sysdate,?,board_seq.currval,0,0,1,?)";
+			pstmt=conn.prepareStatement(query);
+			//
+			pstmt.setString(1, bdto2.getBtitle());
+			pstmt.setString(2, bdto2.getBcontent());
+			pstmt.setString(3, bdto2.getId());
+			pstmt.setString(4, bdto2.getBfile());
+			result=pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}//insert
 }

@@ -8,29 +8,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <title>공지사항 게시판</title>
+  <title>Pages - Login</title>
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,500,700,900&display=swap&subset=korean" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/notice_list.css">
+  <link rel="stylesheet" href="css/write.css">
   <script>
   	$(function(){
   		$(".write").click(function(){
-  			
-  			alert("session : ${session_id}")
-  			if( "${session_id}" == ""){
-  				alert("로그인을 하셔야 글쓰기가 가능합니다.");
+  			//alert("글쓰기를 진행합니다.");
+  			if($("#btitle").val()==""){
+  				alert("제목을 입력하세요.");
+  				$("#btitle").focus();
   				return false;
   			}
   			
-  			location.href="n_insert.do";
+  			insertFrm.submit();
   		});//click
   	});//jquery
   </script>
-  <style>
-  	.txtOn{background:#202020; color:white; font-weight:700;}
-  </style>
 </head>
+
 <body>
   <header>
     <ul>
@@ -74,82 +71,55 @@
   </nav>
 
   <section>
-    <h1>NOTICE</h1>
-    <div class="wrapper">
-      <form action="/search" name="search" method="post">
-        <select name="category" id="category">
-          <option value="0">전체</option>
-          <option value="title">제목</option>
-          <option value="content">내용</option>
-        </select>
+    <h1>관리자 글쓰기</h1>
+    <hr>
 
-        <div class="title">
-          <input type="text" size="16">
-        </div>
-  
-        <button type="submit"><i class="fas fa-search"></i></button>
-      </form>
-    </div>
+    <form action="doN_insert.do" name="insertFrm" method="post" enctype="multipart/form-data">
+      <table>
+        <colgroup>
+          <col width="15%">
+          <col width="85%">
+        </colgroup>
+        <tr>
+          <th>분류</th>
+          <td>
+            <div class="category-wrapper">
+              <select name="category" id="category">
+                <option value="notice">공지</option>
+                <option value="event">이벤트</option>
+              </select>  
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>제목</th>
+          <td>
+            <input type="text" name="btitle" id="btitle">
+          </td>
+        </tr>
+        <tr>
+          <th>내용</th>
+          <td>
+            <textarea name="bcontent" cols="50" rows="10"></textarea>
+          </td>
+        </tr>
+        <tr>
+          <th>이미지 표시</th>
+          <td>
+            <input type="file" name="bfile" id="file">
+            <input type="file" name="bfile2" id="file2">
+            <input type="file" name="bfile3" id="file3">
+            <input type="file" name="bfile4" id="file4">
+          </td>
+        </tr>
+      </table>
+      <hr>
+      <div class="button-wrapper">
+        <button type="button" class="write">작성완료</button>
+        <button type="button" class="cancel">취소</button>
+      </div>
+    </form>
 
-    <table class="listColor">
-      <colgroup>
-        <col width="12%">
-        <col width="45%">
-        <col width="15%">
-        <col width="15%">
-        <col width="13%">
-      </colgroup>
-      <tr>
-        <th>No.</th>
-        <th>제목</th>
-        <th>작성자</th>
-        <th>작성일</th>
-        <th>조회수</th>
-      </tr>
-	  <!-- 반복시작 -->	
-      <c:forEach  items="${list}" var="bdto">
-      <tr>
-        <td>${bdto.bno}</td>
-        <td class="table-title"><a href="n_view.do?bno=${bdto.bno}">${bdto.btitle}</a></td>
-        <td>${bdto.id}</td>
-        <td><fmt:formatDate value="${bdto.bdate}" pattern="yyyy-MM-dd"/></td>
-        <td>${bdto.bhit}</td>
-      </tr>
-      </c:forEach>
-	  <!-- 반복끝 -->	
-      
-    </table>
-
-    <ul class="page-num">
-      <a href="n_list.do?page=1"><li class="first"></li></a>
-      <c:if test="${page>1}">
-	      <a href="n_list.do?page=${page-1}"><li class="prev"></li></a>
-      </c:if>
-      <c:if test="${page<=1}">
-	      <li class="prev"></li>
-      </c:if>
-      <c:forEach var="n" begin="${startPage}" end="${endPage}" step="1">
-    	<c:if test="${page==n}">
-	      <li class="num txtOn">
-	        <div>${n}</div>
-	      </li>
-      	</c:if>
-      	<c:if test="${page!=n}">
-	      <li class="num">
-	       	 <a href="n_list.do?page=${n}"><div>${n}</div></a>
-	      </li>
-      	</c:if>
-      </c:forEach>
-      <c:if test="${page<maxPage}">
-	      <a href="n_list.do?page=${page+1}"><li class="next"></li></a>
-      </c:if>
-      <c:if test="${page>=maxPage}">
-	      <li class="next"></li>
-      </c:if>
-      <a href="n_list.do?page=${maxPage}"><li class="last"></li></a>
-    </ul>
-
-    <div class="write">쓰기</div>
   </section>
 
   <footer>

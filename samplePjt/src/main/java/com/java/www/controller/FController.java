@@ -13,6 +13,8 @@ import com.java.www.service.DoLoginService;
 import com.java.www.service.MInsertService;
 import com.java.www.service.MSelectOneService;
 import com.java.www.service.MUpdateService;
+import com.java.www.service.N_InsertService;
+import com.java.www.service.N_SelectOneService;
 import com.java.www.service.N_listSelectService;
 import com.java.www.service.Service;
 
@@ -77,6 +79,21 @@ public class FController extends HttpServlet {
 			service.execute(request, response);
 			url="n_list.jsp";
 			break;
+		case "/n_view.do": 
+			//service호출
+			service = new N_SelectOneService();
+			service.execute(request, response);
+			url="n_view.jsp";
+			break;
+		case "/doN_insert.do": 
+			//service호출
+			service = new N_InsertService();
+			service.execute(request, response);
+			url="doN_insert.jsp";
+			break;
+		case "/n_insert.do": 
+			response.sendRedirect("n_insert.jsp");
+			break;	
 			
 		}//switch
 		
