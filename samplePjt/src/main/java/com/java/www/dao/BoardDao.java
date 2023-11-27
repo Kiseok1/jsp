@@ -163,4 +163,57 @@ public class BoardDao {
 		}
 		return result;
 	}//insert
+
+	//답글달기를 위한 step증가
+	public void stepUp(int bgroup2, int bstep2) {
+		try {
+			conn=getConnection();
+			query="update board set bstep=bstep+1 where bgroup=? and bstep>?";
+			pstmt=conn.prepareStatement(query);
+			//
+			pstmt.setInt(1, bgroup2);
+			pstmt.setInt(2, bstep2);
+			result=pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+	}
+
+	//답글달기 저장
+	public int replyInsert(BoardDto bdto2) {
+		try {
+			conn=getConnection();
+			query="insert into board values(board_seq.nextval,?,?,sysdate,?,?,?,?,1,?)";
+			pstmt=conn.prepareStatement(query);
+			//
+			pstmt.setString(1, bdto2.getBtitle());
+			pstmt.setString(2, bdto2.getBcontent());
+			pstmt.setString(3, bdto2.getId());
+			pstmt.setInt(4, bdto2.getBgroup());   //부모 그대로 사용
+			pstmt.setInt(5, bdto2.getBstep()+1);  //부모보다 1증가
+			pstmt.setInt(6, bdto2.getBindent()+1);//부모보다 1증가
+			pstmt.setString(7, bdto2.getBfile());
+			result=pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}//replyInsert
 }
