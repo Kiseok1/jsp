@@ -8,36 +8,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <title>공지사항 게시판</title>
+  <title>Pages - Login</title>
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,500,700,900&display=swap&subset=korean" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/notice_list.css">
+  <link rel="stylesheet" href="css/write.css">
   <script>
   	$(function(){
   		$(".write").click(function(){
-  			if( "${session_id}" == ""){
-  				alert("로그인을 하셔야 글쓰기가 가능합니다.");
+  			//alert("글쓰기를 진행합니다.");
+  			if($("#btitle").val()==""){
+  				alert("제목을 입력하세요.");
+  				$("#btitle").focus();
   				return false;
   			}
   			
-  			location.href="n_insert.do";
+  			updateFrm.submit();
   		});//click
-  		
-  		$("#sBtn").click(function(){
-  			if($("#sword").val()==""){
-  				alert("검색어를 입력하세요.");
-  				$("#sword").focus()
-  				return false;
-  			}
-  			searchFrm.submit();
-  		})
   	});//jquery
   </script>
-  <style>
-  	.txtOn{background:#202020; color:white; font-weight:700;}
-  </style>
 </head>
+
 <body>
   <header>
     <ul>
@@ -81,85 +71,55 @@
   </nav>
 
   <section>
-    <h1>NOTICE</h1>
-    <div class="wrapper">
-      <form action="n_list.do" name="searchFrm" method="post">
-        <select name="category" id="category">
-          <option value="all">전체</option>
-          <option value="btitle">제목</option>
-          <option value="bcontent">내용</option>
-        </select>
+    <h1>게시글 수정</h1>
+    <hr>
 
-        <div class="title">
-          <input type="text" name="sword" id="sword" size="16">
-        </div>
-  
-        <button type="button" id="sBtn"><i class="fas fa-search"></i></button>
-      </form>
-    </div>
+    <form action="doN_update.do" name="updateFrm" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="page" value="${page}">
+      <input type="hidden" name="bno" value="${bdto.bno}">
+      <input type="hidden" name="category" value="${category}">
+      <input type="hidden" name="sword" value="${sword}">
+      <input type="hidden" name="oldfile" value="${bdto.bfile}">
+      <table>
+        <colgroup>
+          <col width="15%">
+          <col width="85%">
+        </colgroup>
+        
+        <tr>
+          <th>제목</th>
+          <td>
+            <input type="text" name="btitle" id="btitle" value="${bdto.btitle}">
+          </td>
+        </tr>
+        <tr>
+          <th>내용</th>
+          <td>
+            <textarea name="bcontent" cols="50" rows="10">${bdto.bcontent}</textarea>
+          </td>
+        </tr>
+        <tr>
+          <th>이미지 표시</th>
+          <td>
+            <input type="file" name="bfile" id="file" >
+            
+          </td>
+        </tr>
+        <tr>
+          <th>이미지</th>
+          <td>
+            <img style="width:30%;" src="upload/${bdto.bfile}">
+            
+          </td>
+        </tr>
+      </table>
+      <hr>
+      <div class="button-wrapper">
+        <button type="button" class="write">수정</button>
+        <button type="button" class="cancel">취소</button>
+      </div>
+    </form>
 
-    <table class="listColor">
-      <colgroup>
-        <col width="12%">
-        <col width="45%">
-        <col width="15%">
-        <col width="15%">
-        <col width="13%">
-      </colgroup>
-      <tr>
-        <th>No.</th>
-        <th>제목</th>
-        <th>작성자</th>
-        <th>작성일</th>
-        <th>조회수</th>
-      </tr>
-	  <!-- 반복시작 -->	
-      <c:forEach  items="${list}" var="bdto">
-      <tr>
-        <td>${bdto.bno}</td>
-        <td class="table-title">
-        	<c:forEach var="c" begin="1" end="${bdto.bindent}" step="1">▶</c:forEach>
-        	<a href="n_view.do?page=${page}&bno=${bdto.bno}&category=${category}&sword=${sword}">${bdto.btitle}</a>
-        </td>
-        <td>${bdto.id}</td>
-        <td><fmt:formatDate value="${bdto.bdate}" pattern="yyyy-MM-dd"/></td>
-        <td>${bdto.bhit}</td>
-      </tr>
-      </c:forEach>
-	  <!-- 반복끝 -->	
-      
-    </table>
-
-    <ul class="page-num">
-      <a href="n_list.do?page=1&category=${category}&sword=${sword}"><li class="first"></li></a>
-      <c:if test="${page>1}">
-	      <a href="n_list.do?page=${page-1}&category=${category}&sword=${sword}"><li class="prev"></li></a>
-      </c:if>
-      <c:if test="${page<=1}">
-	      <li class="prev"></li>
-      </c:if>
-      <c:forEach var="n" begin="${startPage}" end="${endPage}" step="1">
-    	<c:if test="${page==n}">
-	      <li class="num txtOn">
-	        <div>${n}</div>
-	      </li>
-      	</c:if>
-      	<c:if test="${page!=n}">
-	      <li class="num">
-	       	 <a href="n_list.do?page=${n}&category=${category}&sword=${sword}"><div>${n}</div></a>
-	      </li>
-      	</c:if>
-      </c:forEach>
-      <c:if test="${page<maxPage}">
-	      <a href="n_list.do?page=${page+1}&category=${category}&sword=${sword}"><li class="next"></li></a>
-      </c:if>
-      <c:if test="${page>=maxPage}">
-	      <li class="next"></li>
-      </c:if>
-      <a href="n_list.do?page=${maxPage}&category=${category}&sword=${sword}"><li class="last"></li></a>
-    </ul>
-
-    <div class="write">쓰기</div>
   </section>
 
   <footer>

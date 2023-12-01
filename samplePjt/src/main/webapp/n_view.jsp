@@ -7,11 +7,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
   <title>Document</title>
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,500,700,900&display=swap&subset=korean" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/read.css">
+  <script>
+  	$(function(){
+  		$("#deleteBtn").click(function(){
+  			if(confirm("게시글을 삭제하시겠습니까?")){
+  				location.href="n_delete.do?page=${page}&bno=${bdto.bno}&category=${category}&sword=${sword}";
+  			}
+  			
+  		});
+  	});
+  </script>
 </head>
 
 <body>
@@ -75,17 +86,28 @@
         </td>
       </tr>
       <tr>
-        <td><strong>다음글</strong> <span class="separator">|</span> [키즈잼] 2월 프로그램 안내</td>
+      	<c:if test="${nextDto.bno!=bdto.bno}">
+        <td><strong>다음글</strong> <span class="separator">|</span> 
+        	<a href="n_view.do?page=${page}&bno=${nextDto.bno}&category=${category}&sword=${sword}">${nextDto.btitle}</a>
+        </td>
+      	</c:if>
+      	<c:if test="${nextDto.bno==bdto.bno}">
+        <td><strong>다음글</strong> <span class="separator">|</span> 
+        	다음글이 존재하지 않습니다.
+        </td>
+      	</c:if>
       </tr>
       <tr>
-        <td><strong>이전글</strong> <span class="separator">|</span> [키즈잼] 2020년 1분기 정기 휴관일 안내</td>
+        <td><strong>이전글</strong> <span class="separator">|</span> 
+        	<a href="n_view.do?page=${page}&bno=${preDto.bno}&category=${category}&sword=${sword}">${preDto.btitle}</a>
+        </td>
       </tr>
     </table>
 
-    <a href="n_list.do"><div class="list">목록</div></a>
-    <div class="list">삭제</div>
-    <div class="list">수정</div>
-    <a href="n_reply.do?bno=${bdto.bno}"><div class="list">답글달기</div></a>
+    <a href="n_list.do?page=${page}&category=${category}&sword=${sword}"><div class="list">목록</div></a>
+    <div class="list" id="deleteBtn">삭제</div>
+    <a href="n_update.do?page=${page}&bno=${bdto.bno}&category=${category}&sword=${sword}"><div class="list">수정</div></a>
+    <a href="n_reply.do?page=${page}&bno=${bdto.bno}&category=${category}&sword=${sword}"><div class="list">답글달기</div></a>
   </section>
 
   <footer>

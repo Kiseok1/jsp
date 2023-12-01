@@ -75,6 +75,9 @@
     <hr>
 
     <form action="doN_reply.do" name="insertFrm" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="page" value="${page}">
+      <input type="hidden" name="category" value="${category}">
+      <input type="hidden" name="sword" value="${sword}">
       <input type="hidden" name="bgroup" value="${bdto.bgroup}">
       <input type="hidden" name="bstep" value="${bdto.bstep}">
       <input type="hidden" name="bindent" value="${bdto.bindent}">
@@ -83,17 +86,7 @@
           <col width="15%">
           <col width="85%">
         </colgroup>
-        <tr>
-          <th>분류</th>
-          <td>
-            <div class="category-wrapper">
-              <select name="category" id="category">
-                <option value="notice">공지</option>
-                <option value="event">이벤트</option>
-              </select>  
-            </div>
-          </td>
-        </tr>
+        
         <tr>
           <th>제목</th>
           <td>

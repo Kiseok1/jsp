@@ -38,14 +38,37 @@ public class BoardDao {
 		return connection;
 	}//getConnection
 
-	//게시글 가져오기 - select
-	public ArrayList<BoardDto> n_listSelect(int startRow, int endRow) {
+	//전체게시글,검색 가져오기 - select
+	public ArrayList<BoardDto> n_listSelect(String category, String sword, int startRow, int endRow) {
 		try {
 			conn=getConnection();
-			query="select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a) where rnum between ? and ?";
-			pstmt=conn.prepareStatement(query);
-			pstmt.setInt(1, startRow);
-			pstmt.setInt(2, endRow);
+			
+			if(category==null) {
+				query="select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a) where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setInt(1, startRow);
+				pstmt.setInt(2, endRow);
+			} else if(category.equals("all")) {
+				query="select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a where btitle like '%'||?||'%' or bcontent like '%'||?||'%') where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, sword);
+				pstmt.setString(2, sword);
+				pstmt.setInt(3, startRow);
+				pstmt.setInt(4, endRow);
+			} else if(category.equals("btitle")) {
+				query="select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a where btitle like '%'||?||'%') where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, sword);
+				pstmt.setInt(2, startRow);
+				pstmt.setInt(3, endRow);
+			} else {
+				query="select * from (select row_number() over(order by bgroup desc, bstep asc) rnum, a.* from board a where bcontent like '%'||?||'%') where rnum between ? and ?";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, sword);
+				pstmt.setInt(2, startRow);
+				pstmt.setInt(3, endRow);
+			}
+			
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
 				bno=rs.getInt("bno");
@@ -78,16 +101,50 @@ public class BoardDao {
 	}//n_listSelect
 
 	//게시글 전체 개수
-	public int nListCount() {
+	public int nListCount(String category, String sword) {
 		try {
 			conn=getConnection();
-			query="select count(*) listCount from board";
-			pstmt=conn.prepareStatement(query);
-			rs=pstmt.executeQuery();
-			if(rs.next()) {
-				listCount=rs.getInt("listCount");
-				System.out.println("dao nListCount : "+listCount);
+			
+			if(category==null) {
+				query="select count(*) listCount from board";
+				pstmt=conn.prepareStatement(query);
+				rs=pstmt.executeQuery();
+				if(rs.next()) {
+					listCount=rs.getInt("listCount");
+					System.out.println("dao nListCount : "+listCount);
+				}
+			} else if(category.equals("all")) {
+				query="select count(*) listCount from board where btitle like '%'||?||'%' or bcontent like '%'||?||'%'";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, sword);
+				pstmt.setString(2, sword);
+				rs=pstmt.executeQuery();
+				if(rs.next()) {
+					listCount=rs.getInt("listCount");
+					System.out.println("dao nListCount : "+listCount);
+				}
+			} else if(category.equals("btitle")) {
+				query="select count(*) listCount from board where btitle like '%'||?||'%' ";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, sword);
+				rs=pstmt.executeQuery();
+				if(rs.next()) {
+					listCount=rs.getInt("listCount");
+					System.out.println("dao nListCount : "+listCount);
+				}
+			} else {
+				query="select count(*) listCount from board where bcontent like '%'||?||'%'";
+				pstmt=conn.prepareStatement(query);
+				pstmt.setString(1, sword);
+				rs=pstmt.executeQuery();
+				if(rs.next()) {
+					listCount=rs.getInt("listCount");
+					System.out.println("dao nListCount : "+listCount);
+				}
 			}
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -137,6 +194,88 @@ public class BoardDao {
 		}
 		return bdto;
 	}//selectOne
+	
+	//이전글 가져오기
+	public BoardDto preSelectOne(int bno2) {
+		try {
+			conn=getConnection();
+			query="select * from (\r\n"
+					+ "select row_number() over (order by bgroup desc, bstep asc) rnum , a.* from board a )\r\n"
+					+ "where rnum =\r\n"
+					+ "(select rnum from (\r\n"
+					+ "select row_number() over (order by bgroup desc, bstep asc) rnum , a.* from board a )\r\n"
+					+ "where bno=?)+1";
+			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, bno2);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				bno=rs.getInt("bno");
+				bgroup=rs.getInt("bgroup");
+				bindent=rs.getInt("bindent");
+				bstep=rs.getInt("bstep");
+				bhit=rs.getInt("bhit");
+				btitle=rs.getString("btitle");
+				bcontent=rs.getString("bcontent");
+				id=rs.getString("id");
+				bfile=rs.getString("bfile");
+				bdate=rs.getTimestamp("bdate");
+				
+				bdto = new BoardDto(bno, btitle, bcontent, bdate, id, bgroup, bindent, bstep, bhit, bfile);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return bdto;
+	}//preSelectOne
+
+	//다음글 가져오기
+	public BoardDto nextSelectOne(int bno2) {
+		try {
+			conn=getConnection();
+			query="select * from (\r\n"
+					+ "select row_number() over (order by bgroup desc, bstep asc) rnum , a.* from board a )\r\n"
+					+ "where rnum =\r\n"
+					+ "(select rnum from (\r\n"
+					+ "select row_number() over (order by bgroup desc, bstep asc) rnum , a.* from board a )\r\n"
+					+ "where bno=?)-1";
+			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, bno2);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				bno=rs.getInt("bno");
+				bgroup=rs.getInt("bgroup");
+				bindent=rs.getInt("bindent");
+				bstep=rs.getInt("bstep");
+				bhit=rs.getInt("bhit");
+				btitle=rs.getString("btitle");
+				bcontent=rs.getString("bcontent");
+				id=rs.getString("id");
+				bfile=rs.getString("bfile");
+				bdate=rs.getTimestamp("bdate");
+				
+				bdto = new BoardDto(bno, btitle, bcontent, bdate, id, bgroup, bindent, bstep, bhit, bfile);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return bdto;
+	}//nextSelectOne
 
 	//게시글 1개 저장
 	public int insert(BoardDto bdto2) {
@@ -216,4 +355,55 @@ public class BoardDao {
 		}
 		return result;
 	}//replyInsert
+
+	//게시글 수정
+	public int update(BoardDto bdto2) {
+		try {
+			conn=getConnection();
+			query="update board set btitle=?,bcontent=?,bfile=? where bno=?";
+			pstmt=conn.prepareStatement(query);
+			//
+			pstmt.setString(1, bdto2.getBtitle());
+			pstmt.setString(2, bdto2.getBcontent());
+			pstmt.setString(3, bdto2.getBfile());
+			pstmt.setInt(4, bdto2.getBno());   
+			result=pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}//update
+
+	//게시글 삭제
+	public int delete(int bno2) {
+		try {
+			conn=getConnection();
+			query="delete board where bno=?";
+			pstmt=conn.prepareStatement(query);
+			//
+			pstmt.setInt(1, bno2);   
+			result=pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	
 }

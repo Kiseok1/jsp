@@ -12,7 +12,7 @@ import com.java.www.dto.BoardDto;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
-public class N_ReplyInsertService implements Service {
+public class N_UpdateService implements Service {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) {
@@ -23,7 +23,7 @@ public class N_ReplyInsertService implements Service {
 		HttpSession session = request.getSession();
 		String id = (String) session.getAttribute("session_id");
 		String btitle="",bcontent="",bfile="",category="",sword="";
-		int bgroup=0,bstep=0,bindent=0,page=1;
+		int bno=0,page=1;
 		
 		//form 데이터 처리 multipart
 		String upload = "c:/upload";
@@ -31,27 +31,25 @@ public class N_ReplyInsertService implements Service {
 		
 		try {
 			MultipartRequest multi = new MultipartRequest(request, upload, size, "utf-8", new DefaultFileRenamePolicy());
+			bno = Integer.parseInt(multi.getParameter("bno"));
+			page = Integer.parseInt(multi.getParameter("page"));
+			btitle = multi.getParameter("btitle");
 			category = multi.getParameter("category");
 			sword = multi.getParameter("sword");
-			btitle = multi.getParameter("btitle");
 			bcontent = multi.getParameter("bcontent");
-			page = Integer.parseInt(multi.getParameter("page"));
-			bgroup = Integer.parseInt(multi.getParameter("bgroup"));
-			bstep = Integer.parseInt(multi.getParameter("bstep"));
-			bindent = Integer.parseInt(multi.getParameter("bindent"));
+			//파일첨부가 되지 않았을때 이전파일을 그대로 사용
+			bfile = multi.getParameter("oldfile");
 			//input type=file 인 것 이름 모두를 가져옴.
 			Enumeration files = multi.getFileNames();
 			while(files.hasMoreElements()) {
 				String f = (String) files.nextElement(); //형변환
-				bfile = multi.getFilesystemName(f); //똑같은 파일이 있을경우 이름을 변경해서 저장
+				String tempfile = multi.getFilesystemName(f); //똑같은 파일이 있을경우 이름을 변경해서 저장
+				if(tempfile!=null) bfile =tempfile;
 			}
-			
-			BoardDto bdto = new BoardDto(btitle, bcontent, id,bgroup,bstep,bindent, bfile);
+
+			BoardDto bdto = new BoardDto(bno, btitle, bcontent, id, bfile);
 			//dao접근 - 게시글 저장메소드 호출
-			//1. bstep bstep 큰수들을 1씩 증가
-			bdao.stepUp(bgroup,bstep);
-			//2. 답글달기 저장
-			int result = bdao.replyInsert(bdto);
+			int result = bdao.update(bdto);
 			
 			//request추가
 			request.setAttribute("result", result);

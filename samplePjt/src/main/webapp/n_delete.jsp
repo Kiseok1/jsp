@@ -8,8 +8,8 @@
 	</head>
 	<body>
 		<script>
-			alert("게시글이 등록되었습니다.");
-			location.href="n_list.do?page=${page}";
+			alert("삭제가 완료되었습니다.");
+			location.href="n_list.do?page=${page}&category=${category}&sword=${sword}";
 		</script>
 	
 	</body>
