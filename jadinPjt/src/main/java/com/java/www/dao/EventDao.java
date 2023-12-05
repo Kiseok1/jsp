@@ -27,6 +27,7 @@ public class EventDao {
 	int cno;
 	String cpw,ccontent;
 	Timestamp cdate;
+	EcommentDto ecdto = null;
 	
 	//getConnection
 	public Connection getConnection() {
@@ -147,5 +148,58 @@ public class EventDao {
 		}
 		return clist;
 	}//commSelectAll
+
+	
+	//하단 댓글 1개 저장 및 검색
+	public EcommentDto CInsert(int bno2, String id2, String cpw2, String ccontent2) {
+		try {
+			conn=getConnection();
+			//select - nextval cno 가져오기
+			query="select ecomment_seq.nextval cno from dual";
+			pstmt=conn.prepareStatement(query);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				cno = rs.getInt("cno");
+				System.out.println("dao CInsert cno : "+cno);
+			}	 
+			//insert - 하단댓글 1개 저장
+			query="insert into ecomment values (?,?,?,?,?,sysdate)";
+			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, cno);
+			pstmt.setInt(2, bno2);
+			pstmt.setString(3, id2);
+			pstmt.setString(4, cpw2);
+			pstmt.setString(5, ccontent2);
+			pstmt.executeUpdate();
+			
+			//select - 하단댓글 1개 가져오기
+			query="select * from ecomment where cno=?";
+			pstmt=conn.prepareStatement(query);
+			pstmt.setInt(1, cno);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				cno=rs.getInt("cno");
+				bno=rs.getInt("bno");
+				id=rs.getString("id");
+				cpw=rs.getString("cpw");
+				ccontent=rs.getString("ccontent");
+				cdate=rs.getTimestamp("cdate");
+
+				ecdto = new EcommentDto(cno, bno, id, cpw, ccontent, cdate);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return ecdto;
+	}
 	
 }

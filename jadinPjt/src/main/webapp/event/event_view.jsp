@@ -256,9 +256,50 @@ $(document).ready(function() {
 						</table>
 					</div>
 					<!-- //이전다음글 -->
+					<script>
+					$(function(){
+						$(".replyBtn").click(function(){
+							/* alert($(".replynum").val());
+							alert($(".replyType").val()); */
+							var bno = "${bdto.bno}"; //jstl구문, bno
+							var cpw = $(".replynum").val();
+							var ccontent = $(".replyType").val();
+							
+							//db에 저장
+							$.ajax({
+								url:"../CInsert",
+								type:"post",
+								data:{"bno":bno, "cpw":cpw, "ccontent":ccontent},
+								dataType:"json",
+								success:function(data){
+									alert("성공");
+									console.log(data);
+								},
+								error:function(){
+									alert("실패");
+								}
+							});//ajax
+							
+							//댓글등록 태그
+							var htmlData='';
+							htmlData += '<ul id="0">';
+							htmlData += '<li class="name">aaa <span>[2023-12-05]</span></li>';
+							htmlData += '<li class="text">'+ccontent+'</li>';
+							htmlData += '<li class="btn">';
+							htmlData += '<a class="rebtn">수정</a>&nbsp';
+							htmlData += '<a class="rebtn">삭제</a>';
+							htmlData += '</li>';
+							htmlData += '</ul>';
+							
+							
+							$(".replyBox").prepend(htmlData); //append()-마지막 , prepend()-처음 html()-삭제후 추가
+							alert("댓글을 등록합니다.");
+							$(".replyType").val("");
+						});//replyBtn
+					});//
+					</script>
 
-
-					<!-- 댓글-->
+					<!-- 댓글입력창 부분-->
 					<div class="replyWrite">
 						<ul>
 							<li class="in">
@@ -266,7 +307,7 @@ $(document).ready(function() {
 								<p class="password">비밀번호&nbsp;&nbsp;<input type="password" class="replynum" /></p>
 								<textarea class="replyType"></textarea>
 							</li>
-							<li class="btn"><a href="#" class="replyBtn">등록</a></li>
+							<li class="btn"><a style="cursor:pointer;" class="replyBtn">등록</a></li>
 						</ul>
 						<p class="ntic">※ 비밀번호를 입력하시면 댓글이 비밀글로 등록 됩니다.</p>
 					</div>
