@@ -405,5 +405,136 @@ public class BoardDao {
 		return result;
 	}
 
+	//조회수 증가
+	public void bhitUp(int bno2) {
+		try {
+			conn = getConnection();
+			query = "update board set bhit = bhit+1 where bno=?";
+			pstmt = conn.prepareStatement(query);
+			//1,2
+			pstmt.setInt(1, bno2);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) { e2.printStackTrace();}
+		}//
+		
+	}
+
+	//좋아요부분 - 특정 유저 좋아요 상태
+	public int myLikeSelect(String id2, int bno2) {
+		int my_like_count = 0;
+		try {
+			conn=getConnection();
+			query="select count(*) my_like_count from b_likes where bno=? and id=? and like_status=1";
+			pstmt=conn.prepareStatement(query);
+			//1,2,
+			pstmt.setInt(1, bno2);   
+			pstmt.setString(2, id2);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				my_like_count = rs.getInt("my_like_count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return my_like_count;
+	}//myLikeSelect
+
+	//좋아요부분 - 전체 좋아요 개수
+	public int allLikeSelect(int bno2) {
+		int all_like_count =0;
+		try {
+			conn=getConnection();
+			query="select count(*) all_like_count from b_likes where bno=? and like_status=1";
+			pstmt=conn.prepareStatement(query);
+			//1,2,
+			pstmt.setInt(1, bno2);   
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				all_like_count = rs.getInt("all_like_count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return all_like_count;
+	}//allLikeSelect
+
+	//좋아요 상태 변경 - update
+	public int myLikeUpdate(String id2, int bno2, int like_status) {
+		int all_like_count = 0;
+		try {
+			conn=getConnection();
+			
+			//유저가 좋아요를 누른 적이 있는지 체크
+			query="select count(*) count from b_likes where bno=? and id=?";
+			pstmt=conn.prepareStatement(query);
+			//1,2,
+			pstmt.setInt(1, bno2);   
+			pstmt.setString(2, id2); 
+			rs = pstmt.executeQuery();
+			int count=0;
+			if(rs.next()) {
+				count = rs.getInt("count");
+			}
+			
+			if (count==0) {
+				//유저가 좋아요 누른 적이 없는 경우 - insert
+				query="insert into b_likes values (b_likes_seq.nextval,?,?,?)";
+				pstmt=conn.prepareStatement(query);
+				//1,2,
+				pstmt.setInt(1, bno2);   
+				pstmt.setString(2, id2);   
+				pstmt.setInt(3, like_status);   
+				pstmt.executeUpdate();
+			} else {
+				//유저가 좋아요 누른 적이 있는 경우 - update
+				query="update b_likes set like_status=? where bno=? and id=?";
+				pstmt=conn.prepareStatement(query);
+				//1,2,
+				pstmt.setInt(1, like_status);   
+				pstmt.setInt(2, bno2);   
+				pstmt.setString(3, id2);   
+				pstmt.executeUpdate();
+				
+			}
+			//좋아요 전체개수 가져오기
+			all_like_count = allLikeSelect(bno2);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(pstmt!=null) pstmt.close();
+				if(conn!=null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return all_like_count;
+	}
+
 	
 }

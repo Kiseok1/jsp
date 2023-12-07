@@ -29,9 +29,9 @@ public class N_listSelectService implements Service {
 		int rowPage = 10;    //1페이지당 10개 게시글
 		int bottomPage = 10; //하단넘버링 개수
 		int page = 1;
-		if(request.getParameter("page")!=null) {
-			page=Integer.parseInt(request.getParameter("page"));
-		}
+//		if(request.getParameter("page")!=null) {
+//			page=Integer.parseInt(request.getParameter("page"));
+//		}
 		System.out.println("service 현재페이지 : "+page);
 		//게시글 수 - category,sword
 		int listCount = bdao.nListCount(category,sword);

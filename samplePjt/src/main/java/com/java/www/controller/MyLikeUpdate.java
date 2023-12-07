@@ -3,7 +3,6 @@ package com.java.www.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,51 +12,43 @@ import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONObject;
 
-import com.java.www.dao.EventDao;
-import com.java.www.dto.EcommentDto;
-import com.java.www.service.EventOneService;
-import com.java.www.service.EventService;
-import com.java.www.service.Service;
+import com.java.www.dao.BoardDao;
+import com.java.www.service.IdCheckService;
 
-
-@WebServlet("/CInsert")
-public class CInsert extends HttpServlet {
+@WebServlet("/MyLikeUpdate")
+public class MyLikeUpdate extends HttpServlet {
 	
 	protected void doAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("doAction");
 		request.setCharacterEncoding("utf-8");
-		int bno = Integer.parseInt(request.getParameter("bno"));
 		HttpSession session = request.getSession();
-		String id = "aaa";
-		String cpw = request.getParameter("cpw");
-		String ccontent = request.getParameter("ccontent");
-		System.out.println("doAction cpw : "+cpw);
-		System.out.println("doAction ccontent : "+ccontent);
+		String id = (String) session.getAttribute("session_id");
 		
-		EcommentDto ecdto = null;
-		//dao 접근 - 저장후 1개 댓글 가져오기
-		EventDao edao = new EventDao();
-		ecdto = edao.CInsert(bno,id,cpw,ccontent);
+		int bno= Integer.parseInt(request.getParameter("bno"));
+		int like_status= Integer.parseInt(request.getParameter("like_status"));
+
+		System.out.println("MyLikeUpdate bno : "+bno);
+		System.out.println("MyLikeUpdate like_status : "+like_status);
 		
-		System.out.println("controller doAction cno"+ecdto.getCno());
+		//service접근
+		//MyLikeUpdateService MyLikeUpdateService = new MyLikeUpdateService(); //리턴값이 필요해서 Interface Service의 execute(리턴없음) 사용안함 
 		
-		//하단댓글 1개 ajax으로 보내기
-		//json형태로 보냄.(xml형태: html - java - 파이썬)
-		//
+		//dao 접근 - 좋아요 상태를 수정
+		BoardDao bdao = new BoardDao();
+		int all_like_count = bdao.myLikeUpdate(id,bno,like_status);
+		System.out.println("controller all_like_count : "+all_like_count);
+		
+		//ajax로 전송
 		JSONObject json = new JSONObject();
-		json.put("cno", ecdto.getCno()); // key,value
-		json.put("id", ecdto.getId()); // key,value
-		json.put("ccontent", ecdto.getCcontent()); // key,value
-		json.put("cdate", ""+ecdto.getCdate()); // key,value
+		json.put("all_like_count", all_like_count); // key,value
+		
 		
 		response.setContentType("application/x-json; charset=utf-8");
 		PrintWriter writer = response.getWriter();
 		writer.print(json);
 		writer.close();
 		
-		
-		
-	}
+	}//doAction
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("doGet");

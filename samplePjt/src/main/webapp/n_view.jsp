@@ -8,6 +8,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <title>Document</title>
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,500,700,900&display=swap&subset=korean" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
@@ -76,6 +77,75 @@
       </tr>
       <tr>
         <td><strong>날짜</strong> <span class="separator">|</span><fmt:formatDate value="${bdto.bdate}" pattern="yyyy-MM-dd"/></td>
+      </tr>
+      <script>
+ 		$(function(){
+ 			var bno="${bdto.bno}";
+			var myLike = "${my_like_count}";       //현재 좋아요 상태
+			var htmlData = "";	  
+ 			$("#likeStatus").click(function(){
+ 				if(myLike==0){
+	 				alert("좋아요 추가");
+	 				alert($(".likeNo").text()+1);
+	 				var num = Number($(".likeNo").text())+1; //자바스크립트 형변환 Number
+	 				myLike = 1;
+	 				//ajax추가
+	 				$.ajax({
+	 					url:"MyLikeUpdate",
+	 					type:"post",
+	 					data:{"bno":bno,"like_status":1},
+	 					dataType:"json",
+	 					success:function(data){
+	 						alert("성공");
+	 						alert("총 좋아요 개수 : "+data.all_like_count);
+	 						htmlData = '';
+	 		 				htmlData += '좋아요 <i class="fa-solid fa-heart"></i><span class="likeNo"> '+num+'</span>';
+	 		 				$("#likeStatus").html(htmlData);
+	 					},
+	 					error:function(){
+	 						alert("실패");
+	 					}
+	 					
+	 				});
+	 				
+ 				} else {
+	 				alert("좋아요 취소");
+	 				//alert($(".likeNo").text());
+	 				var num = Number($(".likeNo").text())-1; //자바스크립트 형변환 Number
+	 				myLike = 0;
+	 				//ajax추가
+	 				$.ajax({
+	 					url:"MyLikeUpdate",
+	 					type:"post",
+	 					data:{"bno":bno,"like_status":0},
+	 					dataType:"json",
+	 					success:function(data){
+	 						alert("성공");
+	 						alert("총 좋아요 개수 : "+data.all_like_count);
+	 						htmlData = '';
+	 		 				htmlData += '좋아요 <i class="fa-regular fa-heart"></i><span class="likeNo"> '+num+'</span>';
+	 		 				$("#likeStatus").html(htmlData);
+	 					},
+	 					error:function(){
+	 						alert("실패");
+	 					}
+	 					
+	 					
+	 				});
+	 				
+ 				}
+ 			});
+ 		});//jquery     
+      </script>
+      <tr>
+        <td id="likeStatus">좋아요
+	        <c:if test="${my_like_count==1}">
+		        <i class="fa-solid fa-heart"></i><span class="likeNo"> ${all_like_count}</span>
+	        </c:if>
+	        <c:if test="${my_like_count!=1}">
+		        <i class="fa-regular fa-heart"></i><span class="likeNo"> ${all_like_count}</span>
+	        </c:if>
+        </td>
       </tr>
       <tr>
         <td class="article">${bdto.bcontent}</td>

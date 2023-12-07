@@ -270,31 +270,37 @@ $(document).ready(function() {
 								url:"../CInsert",
 								type:"post",
 								data:{"bno":bno, "cpw":cpw, "ccontent":ccontent},
-								dataType:"json",
+								//dataType:"json",
 								success:function(data){
-									alert("성공");
-									console.log(data);
+									//alert("성공");
+									//alert("댓글번호 : "+data.cno);
+									
+									//댓글등록 태그
+									var htmlData='';
+									htmlData += '<ul id="'+data.cno+'">';
+									htmlData += '<li class="name">'+data.id+' <span>['+data.cdate+']</span></li>';
+									htmlData += '<li class="text">'+data.ccontent+'</li>';
+									htmlData += '<li class="btn">';
+									htmlData += '<a class="rebtn">수정</a>&nbsp';
+									htmlData += '<a class="rebtn">삭제</a>';
+									htmlData += '</li>';
+									htmlData += '</ul>';
+									
+									
+									$(".replyBox").prepend(htmlData); //append()-마지막 , prepend()-처음 html()-삭제후 추가
+									$(".replynum").val(""); //비밀번호 공란 처리
+									$(".replyType").val(""); // 내용 공란 처리
+									alert("댓글을 등록합니다.");
+									
+									
 								},
 								error:function(){
 									alert("실패");
 								}
 							});//ajax
 							
-							//댓글등록 태그
-							var htmlData='';
-							htmlData += '<ul id="0">';
-							htmlData += '<li class="name">aaa <span>[2023-12-05]</span></li>';
-							htmlData += '<li class="text">'+ccontent+'</li>';
-							htmlData += '<li class="btn">';
-							htmlData += '<a class="rebtn">수정</a>&nbsp';
-							htmlData += '<a class="rebtn">삭제</a>';
-							htmlData += '</li>';
-							htmlData += '</ul>';
 							
 							
-							$(".replyBox").prepend(htmlData); //append()-마지막 , prepend()-처음 html()-삭제후 추가
-							alert("댓글을 등록합니다.");
-							$(".replyType").val("");
 						});//replyBtn
 					});//
 					</script>
