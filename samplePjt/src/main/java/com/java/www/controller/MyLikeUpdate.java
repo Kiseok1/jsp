@@ -27,6 +27,9 @@ public class MyLikeUpdate extends HttpServlet {
 		int bno= Integer.parseInt(request.getParameter("bno"));
 		int like_status= Integer.parseInt(request.getParameter("like_status"));
 
+//		int bno=1043;
+//		int like_status=0;
+		
 		System.out.println("MyLikeUpdate bno : "+bno);
 		System.out.println("MyLikeUpdate like_status : "+like_status);
 		
